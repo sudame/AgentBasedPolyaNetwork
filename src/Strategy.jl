@@ -1,3 +1,8 @@
+"""
+    wsw_strategy(agent::Agent)::Vector{AgentId}
+
+壺の大きさを重みとしてランダムにエージェントを紹介する戦略。
+"""
 function wsw_strategy(agent::Agent)::Vector{AgentId}
   cm::Dict = countmap(agent.urn)
   p = collect(keys(cm))
@@ -9,6 +14,11 @@ function wsw_strategy(agent::Agent)::Vector{AgentId}
   end
 end
 
+"""
+    ssw_strategy(agent::Agent)::Vector{AgentId}
+
+最も最近紹介されたエージェントを紹介する戦略。
+"""
 function ssw_strategy(agent::Agent)::Vector{AgentId}
   # もしすでにバッファの中に今インタラクションしたエージェントが入っているならバッファの更新はしない
   if agent.history[end] in agent.buffer

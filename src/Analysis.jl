@@ -20,7 +20,18 @@ function makechunks(X::AbstractVector{T}, n::Int) where {T}
   return Y
 end
 
-function calc_youth_coefficient(env::Environment, n::Int)
+"""
+    calc_youth_coefficient(env::Environment, n::Int)
+
+Youth Coefficientを算出する。
+
+## Arguments
+- `n::Int` 履歴をいくつに分割して計算するか (defualt: 100)
+
+## Reference
+_Monechi, B., Ruiz-Serrano, Ã., Tria, F., & Loreto, V. (2017). Waves of novelties in the expansion into the adjacent possible. PLoS ONE, 12(6), e0179303. [https://doi.org/10.1371/journal.pone.0179303](https://doi.org/10.1371/journal.pone.0179303)_
+"""
+function calc_youth_coefficient(env::Environment, n::Int=100)
   function mean_birthstep_in_chunk(env::Environment, chunk::Vector{Tuple{Int,Int}})
     agent_nums = unique(vcat(collect.(chunk)...))
     mean(map(agent_num -> findfirst(env, agent_num), agent_nums))
@@ -31,7 +42,15 @@ function calc_youth_coefficient(env::Environment, n::Int)
   map(chunk -> mean_birthstep_in_chunk(env, chunk), chunks)
 end
 
-function ginilike_coefficient(env::Environment)
+"""
+    calc_ginilike_coefficient(env::Environment)
+
+ジニ係数的な指標を算出する。
+
+## Reference
+_Monechi, B., Ruiz-Serrano, Ã., Tria, F., & Loreto, V. (2017). Waves of novelties in the expansion into the adjacent possible. PLoS ONE, 12(6), e0179303. [https://doi.org/10.1371/journal.pone.0179303](https://doi.org/10.1371/journal.pone.0179303)_
+"""
+function calc_ginilike_coefficient(env::Environment)
   elements = vcat(collect.(env.history)...)
   r_i = tmap(i -> findfirst(ue -> ue == elements[i], unique(elements)), 1:length(elements))
   x_i = r_i ./ length(unique(elements))

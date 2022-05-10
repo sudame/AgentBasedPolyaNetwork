@@ -9,6 +9,11 @@ function generate_agent_example(env::Environment)
   return agent
 end
 
+"""
+    readable_history(raw::Vector{Tuple{Agent,Agent}})
+
+環境に保存された履歴を人間が読みやすい形式に変換する。
+"""
 function readable_history(raw::Vector{Tuple{Agent,Agent}})
   return map((agents) -> (agents[1].id, agents[2].id), raw)
 end
