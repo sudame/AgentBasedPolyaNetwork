@@ -47,7 +47,10 @@ end
 
 ジニ係数的な指標を算出する。
 
-## Reference
+# Retruns
+`(gini-like_coefficient::Float64, x::Vector{Float64}, y::Vector{Float64})`
+
+# Reference
 _Monechi, B., Ruiz-Serrano, Ã., Tria, F., & Loreto, V. (2017). Waves of novelties in the expansion into the adjacent possible. PLoS ONE, 12(6), e0179303. [https://doi.org/10.1371/journal.pone.0179303](https://doi.org/10.1371/journal.pone.0179303)_
 """
 function calc_ginilike_coefficient(env::Environment)
@@ -59,5 +62,13 @@ function calc_ginilike_coefficient(env::Environment)
   y_i = tmap(i -> sum(tmap(f_element, unique(elements)[1:r_i[i]])), 1:length(elements))
 
   sorted = sort(collect(zip(x_i, y_i)); by=first)
-  first.(sorted), last.(sorted)
+  sorted_x = first.(sorted)
+  sorted_y = last.(sorted)
+
+  s = 0.0
+  for i in 1:(length(sorted_x) - 1)
+    s += (sorted_x[i + 1] - sorted_x[i]) * (sorted_y[i] + sorted_y[i + 1]) / 2
+  end
+
+  return (s - 0.5) * 2, sorted_x, sorted_y
 end
