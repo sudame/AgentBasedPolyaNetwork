@@ -1,3 +1,7 @@
+include("MyBase.jl")
+include("Agent.jl")
+
+const WhoUpdateBuffer = Set([:player, :caller, :called])
 
 """
     Environment(id::Int, generate_agent_callback::Function, [agents:::Vector{Agent}, history::Vector{Tuple{AgentId,AgentId}}, next_agent_id::Int])
@@ -10,6 +14,7 @@
 - `agents::Vector{Agent}` 環境に存在するエージェント
 - `history::Vector{Tuple{AgentId,AgentId}}` 環境で実行されたインタラクションの履歴
 - `next_agent_id::Int` 次に生成されるエージェントのID
+- `who_update_buffer` インタラクション時に誰がバッファを更新するのか (:both or :caller or :called, default: :both)
 """
 mutable struct Environment
   id::Int
@@ -17,10 +22,15 @@ mutable struct Environment
   agents::Vector{Agent}
   history::Vector{Tuple{AgentId,AgentId}}
   next_agent_id::Int
+  who_update_buffer::Symbol
 end
 
-function Environment(id::Int, generate_agent_callback::Function)
-  Environment(id, generate_agent_callback, AgentId[], Tuple{AgentId,AgentId}[], 0)
+function Environment(
+  id::Int, generate_agent_callback::Function; who_update_buffer::Symbol=:both
+)
+  Environment(
+    id, generate_agent_callback, AgentId[], Tuple{AgentId,AgentId}[], 0, who_update_buffer
+  )
 end
 
 """
@@ -104,8 +114,12 @@ function interact!(env::Environment, caller::Agent, called::Agent)
   called.size += called.rho + caller.nu + 1
 
   # バッファの更新
-  caller.buffer .= caller.strategy(caller)
-  called.buffer .= called.strategy(called)
+  if (env.who_update_buffer ∈ [:caller, :both])
+    caller.buffer .= caller.strategy(caller)
+  end
+  if (env.who_update_buffer ∈ [:called, :both])
+    called.buffer .= called.strategy(called)
+  end
 
   return env.history[end]
 end
