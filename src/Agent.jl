@@ -20,8 +20,9 @@ mutable struct Agent
   buffer::Vector{AgentId}
   history::Vector{AgentId}
   size::Int
+  birthstep::Int
 end
 
 function Agent(id::Int, rho::Int, nu::Int, strategy::Function)
-  return Agent(id, rho, nu, strategy, AgentId[], AgentId[], AgentId[], 0)
+  return Agent(id, rho, nu, strategy, AgentId[], AgentId[], AgentId[], 0, -1)
 end

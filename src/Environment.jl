@@ -81,6 +81,7 @@ function init!(env::Environment, init_agents::Vector{Agent})
     new_agent_ids = map(a -> a.id, new_agents)
     append_agents!(env, new_agents)
     append!(agent.buffer, new_agent_ids)
+    agent.birthstep = 1
   end
 
   return env
@@ -105,6 +106,7 @@ function interact!(env::Environment, caller::Agent, called::Agent)
     append!(called.buffer, new_agent_ids)
     # append!(called.urn, new_agent_ids)
     called.size += called.nu + 1
+    called.birthstep = length(env.history)
   end
 
   # 自身の交換とバッファの交換
