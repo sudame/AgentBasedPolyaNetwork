@@ -5,7 +5,6 @@ include("Agent.jl")
 include("Environment.jl")
 include("Strategy.jl")
 include("Util.jl")
-include("Analysis.jl")
 
 export AgentId
 export Agent
