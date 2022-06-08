@@ -1,12 +1,11 @@
 name = "AgentBasedPolyaNetwork"
 uuid = "5a9a88b1-547f-43b5-a705-97e6da658d06"
 authors = ["SUDA Mikihiro <s@sudame.net> and contributors"]
-version = "0.1.5"
+version = "0.2.0"
 
 [deps]
 JuliaFormatter = "98e50ef6-434e-11e9-1051-2b60c6c9e899"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
-ThreadedIterables = "11d239b0-c0b9-11e8-1935-d5cfa53abb03"
 
 [compat]
 julia = "1"
