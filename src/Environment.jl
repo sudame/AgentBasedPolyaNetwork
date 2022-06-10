@@ -15,6 +15,7 @@ const WhoUpdateBuffer = Set([:player, :caller, :called])
 - `history::Vector{Tuple{AgentId,AgentId}}` 環境で実行されたインタラクションの履歴
 - `next_agent_id::Int` 次に生成されるエージェントのID
 - `who_update_buffer` インタラクション時に誰がバッファを更新するのか (:both or :caller or :called, default: :both)
+- `get_caller::Function{Environment->Agent}` 環境からインタラクションの起点エージェントを1つ選択する (default: 壺のサイズで重みを付けたランダム)
 """
 mutable struct Environment
   id::Int
@@ -23,13 +24,23 @@ mutable struct Environment
   history::Vector{Tuple{AgentId,AgentId}}
   next_agent_id::Int
   who_update_buffer::Symbol
+  get_caller::Function
 end
 
 function Environment(
-  id::Int, generate_agent_callback::Function; who_update_buffer::Symbol=:both
+  id::Int,
+  generate_agent_callback::Function;
+  who_update_buffer::Symbol=:both,
+  get_caller::Function=get_caller,
 )
   Environment(
-    id, generate_agent_callback, AgentId[], Tuple{AgentId,AgentId}[], 0, who_update_buffer
+    id,
+    generate_agent_callback,
+    AgentId[],
+    Tuple{AgentId,AgentId}[],
+    0,
+    who_update_buffer,
+    get_caller,
   )
 end
 
@@ -159,7 +170,7 @@ end
 3. インタラクションを行う
 """
 function step!(env::Environment)
-  caller = get_caller(env)
+  caller = env.get_caller(env)
   called = get_called(env, caller)
   interact!(env, caller, called)
 end
